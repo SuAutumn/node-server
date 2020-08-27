@@ -1,14 +1,20 @@
 const http = require('http')
 const ip = require('./ip')
 
+const port = 3006;
+
 http.createServer(async function (request, response) {
-  const body = await getBody(request)
-  console.log(new Date().toLocaleTimeString(), ' ---- ', request.method, JSON.parse(body).detail);
+  if (request.method.toLowerCase() === 'post') {
+    const body = await getBody(request)
+    console.log(new Date().toLocaleTimeString(), ' ---- ', request.method, JSON.parse(body));
+  } else {
+    console.log(new Date().toLocaleTimeString(), ' ---- ', request.method);
+  }
   response.writeHead(200, {'Content-Type': 'text/plain'})
   response.end('ok')
-}).listen(3006, ip)
+}).listen(port)
 
-console.log(`Server running at http://${ip}:3006`)
+console.log(`Server running at http://${ip}:${port}`)
 
 /**
  * 获取request.body
@@ -24,5 +30,7 @@ function getBody(request) {
     request.on('end', () => {
       resolve(str);
     })
+
+    request.on('error', reject)
   })
 }
