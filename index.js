@@ -1,17 +1,36 @@
 const http = require('http')
 const ip = require('./ip')
+const Request = require('./Request')
 
-const port = 3006;
+const port = 3006
+const url = 'http://192.168.1.6'
 
 http.createServer(async function (request, response) {
-  if (request.method.toLowerCase() === 'post') {
-    const body = await getBody(request)
-    console.log(new Date().toLocaleTimeString(), ' ---- ', request.method, JSON.parse(body));
-  } else {
-    console.log(new Date().toLocaleTimeString(), ' ---- ', request.method);
+  console.log(new Date().toLocaleTimeString(), ' ---- ', request.method, ' ', request.url)
+  try {
+    const method = request.method.toLowerCase()
+    let res
+    if (method === 'post') {
+      const body = await getBody(request)
+      console.log(body)
+      res = await Request.post(url + request.url, body, request.headers)
+    }
+    if (method === 'get') {
+      res = await Request.get(url + request.url, request.headers)
+    }
+    console.log(res.data)
+    response.writeHead(
+      res.status,
+      res.headers,
+    )
+    response.end(res.data)
+  } catch (e) {
+    console.error(e)
+    response.writeHead(500, {
+      'Content-Type': 'text/plain',
+    })
+    response.end('internal error')
   }
-  response.writeHead(200, {'Content-Type': 'text/plain'})
-  response.end('ok')
 }).listen(port)
 
 console.log(`Server running at http://${ip}:${port}`)
@@ -20,15 +39,15 @@ console.log(`Server running at http://${ip}:${port}`)
  * 获取request.body
  * @param request {IncomingMessage}
  */
-function getBody(request) {
+function getBody (request) {
   return new Promise((resolve, reject) => {
-    let str = '';
+    let str = ''
     request.on('data', chunk => {
-      str += chunk;
+      str += chunk
     })
 
     request.on('end', () => {
-      resolve(str);
+      resolve(str)
     })
 
     request.on('error', reject)
