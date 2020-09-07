@@ -1,4 +1,5 @@
 const http = require('http')
+const qs = require('querystring')
 const ip = require('./ip')
 const Request = require('./Request')
 
@@ -18,7 +19,6 @@ http.createServer(async function (request, response) {
     if (method === 'get') {
       res = await Request.get(url + request.url, request.headers)
     }
-    console.log(res.data)
     response.writeHead(
       res.status,
       res.headers,

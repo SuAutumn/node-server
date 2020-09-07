@@ -14,14 +14,22 @@ class Request {
         },
         timeout,
       }, res => {
-        res.setEncoding('utf8')
-        let data = ''
-        res.on('data', chunk => data += chunk)
-        res.on('end', () => resolve({
-          status: res.statusCode,
-          data,
-          headers: res.headers,
-        }))
+        // do not set encoding formatter, otherwise response data will be parsed as string
+        // res.setEncoding('utf8')
+        let buffer = Buffer.alloc(0)
+        res.on('data', chunk => {
+          buffer = Buffer.concat([
+            buffer,
+            Buffer.alloc(Buffer.byteLength(chunk), chunk),
+          ])
+        })
+        res.on('end', () => {
+          return resolve({
+            status: res.statusCode,
+            data: buffer,
+            headers: res.headers,
+          })
+        })
       })
       req.on('error', reject)
       req.write(data || '')
