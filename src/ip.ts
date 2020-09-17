@@ -1,4 +1,4 @@
-const os = require('os');
+import * as os from 'os'
 
 let ip = ''
 const networkInterface = os.networkInterfaces()
@@ -11,4 +11,5 @@ Object.keys(networkInterface).forEach(key => {
   })
 })
 
-module.exports = ip;
+export default ip
+// module.exports = ip
