@@ -7,13 +7,10 @@
     "removeComments": true,
     "rootDir": ".",
     "strict": false,
-    "outDir": "dist"
+    "outDir": "dist",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
   },
-  "exclude": [
-    "node_modules"
-  ],
-  "include": [
-    "src/**/*",
-    "index.d.ts"
-  ]
+  "exclude": ["node_modules"],
+  "include": ["src/**/*", "index.d.ts"]
 }

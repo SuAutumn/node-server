@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "serve": "node dist/src/index.js -p 3007 --proxy-url http://192.168.1.6",
-    "tsc": "tsc --watch"
+    "tsc:watch": "tsc --watch"
   },
   "keywords": [],
   "author": "",
