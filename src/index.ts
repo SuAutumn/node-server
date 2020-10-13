@@ -12,12 +12,18 @@ try {
 const port = program.port
 const url = program.proxyUrl
 
-http.createServer(
-  async function (request: IncomingMessage, response: ServerResponse) {
+http
+  .createServer(async function (
+    request: IncomingMessage,
+    response: ServerResponse
+  ) {
     if (/\/log$/.test(request.url)) {
       const body = await getBody(request)
       console.log(
-        `${new Date().toLocaleTimeString()}----${request.method} ${request.url}\ndata: ${body}`)
+        `ip: ${request.connection.remoteAddress} ${new Date().toLocaleTimeString()}----${request.method} ${
+          request.url
+        }\ndata: ${body}`
+      )
 
       response.writeHead(200, { 'Content-Type': 'text/plain' })
       return response.end('ok')
@@ -33,12 +39,12 @@ http.createServer(
       if (method === 'get') {
         res = await Request.get(url + request.url, request.headers)
       }
-      response.writeHead(
-        res.status,
-        res.headers,
-      )
+      response.writeHead(res.status, res.headers)
       console.log(
-        `${new Date().toLocaleTimeString()}----${request.method} ${request.url}\nproxy code: ${res.status}`)
+        `${new Date().toLocaleTimeString()}----${request.method} ${
+          request.url
+        }\nproxy code: ${res.status}`
+      )
       response.end(res.data)
     } catch (e) {
       console.error(e)
@@ -47,7 +53,8 @@ http.createServer(
       })
       response.end('internal error')
     }
-  }).listen(port)
+  })
+  .listen(port)
 
 console.log(`Server running at http://${ip}:${port}`)
 
@@ -55,10 +62,10 @@ console.log(`Server running at http://${ip}:${port}`)
  * 获取request.body
  * @param request {IncomingMessage}
  */
-function getBody (request: IncomingMessage) {
+function getBody(request: IncomingMessage) {
   return new Promise((resolve, reject) => {
     let str = ''
-    request.on('data', chunk => {
+    request.on('data', (chunk) => {
       str += chunk
     })
 
